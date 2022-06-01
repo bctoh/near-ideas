@@ -6,11 +6,6 @@ use near_sdk::{
     *,
 };
 
-#[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
-pub struct Idea {
-    records: LookupMap<String, String>,
-}
 
 
 #[cfg(test)]
