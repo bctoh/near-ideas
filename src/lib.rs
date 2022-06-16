@@ -1,39 +1,63 @@
+#[allow(unused_imports)]
+
 use near_sdk::{
-    borsh::{self, *},
-    collections::*,
-    json_types::*,
-    serde::{self, *},
-    *,
+  borsh,
+  borsh::{ BorshDeserialize, BorshSerialize},
+  log,
+  serde::{ Deserialize, Serialize,},
+  env,
+  near_bindgen,
 };
 
-#[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(Clone, BorshDeserialize, BorshSerialize)]
 pub struct Idea {
-    records: LookupMap<String, String>,
+    id: u8,
+    user: String,
+    title: String,
 }
 
-
-#[cfg(test)]
-mod tests {
-    use crate::*;
-    // use near_sdk::{test_utils::*, testing_env};
-
-    // const ONE_NEAR: u128 = u128::pow(10, 24);
-
-    // fn contract_account() -> AccountId {
-    //     "contract".parse::<AccountId>().unwrap()
-    // }
-
-    // fn get_context(predecessor_account_id: AccountId) -> VMContextBuilder {
-    //     let mut builder = VMContextBuilder::new();
-    //     builder
-    //         .current_account_id(contract_account())
-    //         .account_balance(15 * ONE_NEAR)
-    //         .signer_account_id(predecessor_account_id.clone())
-    //         .predecessor_account_id(predecessor_account_id);
-    //     builder
-    // }
-
-    #[test]
-    fn test() {}
+#[near_bindgen]
+#[derive(BorshDeserialize, BorshSerialize, Default)]
+pub struct Ideas {
+    ideas: Vec<Idea>
 }
+
+#[near_bindgen]
+impl Ideas {
+    pub fn add_idea(&mut self, title: String) -> Idea {
+      let account_id = env::signer_account_id();
+      let user = String::from(account_id);
+      let len_ = self.ideas.len();
+      let mut idea_id = 0;
+      if len_ > 0 {
+        idea_id = self.ideas[len_ - 1].id + 1;
+      }
+      let idea = Idea {
+        id: idea_id as u8,
+        user,
+        title,
+      };
+      self.ideas.push(idea.clone());
+      return idea;
+    }
+    
+    pub fn get_idea(&self, index: usize) -> Option<&Idea> {
+      // let len = self.ideas.len();
+      // if len > 0 {
+      //   return self.ideas.get(index)
+      // } else {
+      //   return None
+      // }
+      self.ideas.get(index)
+    }
+
+  }
+
+// #[cfg(test)]
+// mod tests {
+//   use super
+//   #[test]
+//   fn add_idea() {
+
+//   }
+// }
