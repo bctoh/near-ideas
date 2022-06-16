@@ -9,7 +9,8 @@ use near_sdk::{
   near_bindgen,
 };
 
-#[derive(Clone, BorshDeserialize, BorshSerialize)]
+#[derive(Clone, Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
+#[serde(crate="near_sdk::serde")]
 pub struct Idea {
     id: u8,
     user: String,
@@ -27,10 +28,10 @@ impl Ideas {
     pub fn add_idea(&mut self, title: String) -> Idea {
       let account_id = env::signer_account_id();
       let user = String::from(account_id);
-      let len_ = self.ideas.len();
+      let len = self.ideas.len();
       let mut idea_id = 0;
-      if len_ > 0 {
-        idea_id = self.ideas[len_ - 1].id + 1;
+      if len > 0 {
+        idea_id = self.ideas[len - 1].id + 1;
       }
       let idea = Idea {
         id: idea_id as u8,
@@ -41,23 +42,58 @@ impl Ideas {
       return idea;
     }
     
-    pub fn get_idea(&self, index: usize) -> Option<&Idea> {
+    pub fn get_idea(&self, index: isize) -> Option<&Idea> {
       // let len = self.ideas.len();
       // if len > 0 {
       //   return self.ideas.get(index)
       // } else {
       //   return None
       // }
-      self.ideas.get(index)
+      if index < 0 {
+        env::panic_str("It can't be negative");
+      }
+      self.ideas.get(index as usize)
+    }
+
+    pub fn remove_idea(&mut self, index: usize) -> Idea {
+      self.ideas.remove(index)
     }
 
   }
 
-// #[cfg(test)]
-// mod tests {
-//   use super
-//   #[test]
-//   fn add_idea() {
+#[cfg(test)]
+#[allow(unused_imports)]
+mod tests {
+  use super::*;
+  use near_sdk::{
+    AccountId,
+    env,
+    testing_env,
+    test_utils::VMContextBuilder
+  };
 
-//   }
-// }
+  fn setup() -> Ideas {
+    let builder = VMContextBuilder::new();
+    testing_env!(builder.build());
+    let contract = Ideas::default();
+    return contract;
+  }
+  
+  #[test]
+  fn get_idea() {
+    let contract = setup();
+    
+    let idea = contract.get_idea(0);
+    assert!(idea.is_none());
+  }
+
+  #[test]
+  #[should_panic(expected="It can't be negative")]
+  fn get_wrong_idea() {
+    let contract = setup();
+
+    let _idea = contract.get_idea(-1);
+
+  }
+
+}
