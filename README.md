@@ -10,6 +10,6 @@ Near Ideas is a Rust Smart Contract project to crowdsource ideas for the Near Pr
 
 # Instructions
 1. To submit a new idea: `near call learnrust.bctoh.testnet add_idea '{"title": "New Idea"}' --account-id youraccount.testnet`
-2. To remove an idea: `near call learnrust.bctoh.testnet remove_dea '{"index": _SPECIFY-INDEX-NUMBER-HERE-IN-INT_}`
+2. To remove an idea: `near call learnrust.bctoh.testnet remove_idea '{"index": _SPECIFY-INDEX-NUMBER-HERE-IN-INT_} --account-id youraccount.testnet`
 3. To get a specific idea: `near call learnrust.bctoh.testnet get_idea '{"index": _SPECIFY-INDEX-NUMBER-HERE-IN-INT_}' --accountId youraccount.testnet`
 
