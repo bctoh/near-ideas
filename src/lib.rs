@@ -43,12 +43,6 @@ impl Ideas {
     }
     
     pub fn get_idea(&self, index: isize) -> Option<&Idea> {
-      // let len = self.ideas.len();
-      // if len > 0 {
-      //   return self.ideas.get(index)
-      // } else {
-      //   return None
-      // }
       if index < 0 {
         env::panic_str("It can't be negative");
       }
